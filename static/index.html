@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DISTINTO — Autenticação Descentralizada de Luxo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --card-bg: #1a1a1a;
+      --card-bg-glass: rgba(26, 26, 26, 0.75);
+      --gold: #D4AF37;
+      --gold-dim: rgba(212, 175, 55, 0.15);
+      --gold-glow: rgba(212, 175, 55, 0.35);
+      --gold-soft: rgba(212, 175, 55, 0.08);
+      --emerald: #2ecc71;
+      --emerald-dim: rgba(46, 204, 113, 0.15);
+      --crimson: #e74c3c;
+      --crimson-dim: rgba(231, 76, 60, 0.12);
+      --text-primary: #f5f5f5;
+      --text-secondary: #999999;
+      --text-muted: #666666;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.3s ease;
+      --transition-fast: 0.18s ease;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(165deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════ AMBIENT BACKGROUND ═══════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ═══════════════════ HEADER ═══════════════════ */
+    .header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 48px 24px 0;
+    }
+
+    .logo {
+      font-family: var(--font-heading);
+      font-size: 3.2rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 15%;
+      width: 70%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .subtitle {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: var(--text-secondary);
+      margin-top: 14px;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════ TABS ═══════════════════ */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 40px;
+      padding: 0 24px;
+    }
+
+    .tab-btn {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      padding: 12px 28px;
+      cursor: pointer;
+      position: relative;
+      transition: color var(--transition);
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width var(--transition);
+      border-radius: 2px;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+    }
+
+    .tab-btn.active::after {
+      width: 60%;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: 900px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════ MAIN CONTENT ═══════════════════ */
+    .main {
+      position: relative;
+      z-index: 5;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════ CARD ═══════════════════ */
+    .card {
+      background: var(--card-bg-glass);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius);
+      padding: 36px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .card:hover {
+      border-color: var(--gold-glow);
+      box-shadow: 0 0 40px rgba(212, 175, 55, 0.06);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-title .icon {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    /* ═══════════════════ DASHBOARD GRID ═══════════════════ */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ═══════════════════ FORM ELEMENTS ═══════════════════ */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition-fast);
+      appearance: none;
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .form-select option {
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+
+    /* ═══════════════════ BUTTONS ═══════════════════ */
+    .btn {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 32px;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, #c9a22e 100%);
+      color: #0a0a0a;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+    }
+
+    .btn-gold:hover:not(:disabled) {
+      box-shadow: 0 6px 30px rgba(212, 175, 55, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: rgba(212, 175, 55, 0.08);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-verify {
+      background: linear-gradient(135deg, var(--gold) 0%, #c9a22e 100%);
+      color: #0a0a0a;
+      font-size: 0.95rem;
+      padding: 16px 40px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 25px rgba(212, 175, 55, 0.25);
+    }
+
+    .btn-verify:hover:not(:disabled) {
+      box-shadow: 0 6px 35px rgba(212, 175, 55, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ═══════════════════ RESULT CARDS ═══════════════════ */
+    .result-card {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: var(--radius-sm);
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .result-success {
+      background: rgba(46, 204, 113, 0.06);
+      border: 1px solid var(--emerald-dim);
+    }
+
+    .result-success .result-title {
+      color: var(--emerald);
+    }
+
+    .result-error {
+      background: rgba(231, 76, 60, 0.06);
+      border: 1px solid var(--crimson-dim);
+    }
+
+    .result-error .result-title {
+      color: var(--crimson);
+    }
+
+    .result-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.88rem;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .result-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.84rem;
+    }
+
+    /* ═══════════════════ VERIFICATION PORTAL ═══════════════════ */
+    .verify-hero {
+      text-align: center;
+      padding: 60px 0 20px;
+    }
+
+    .verify-hero h2 {
+      font-family: var(--font-heading);
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+
+    .verify-hero p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      max-width: 640px;
+      margin: 0 auto;
+      align-items: stretch;
+    }
+
+    .search-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      pointer-events: none;
+      transition: color var(--transition);
+    }
+
+    .search-input {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px 18px 50px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .search-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    }
+
+    .search-input:focus ~ .search-icon {
+      color: var(--gold);
+    }
+
+    @media (max-width: 600px) {
+      .search-bar {
+        flex-direction: column;
+      }
+      .btn-verify {
+        width: 100%;
+      }
+    }
+
+    /* ═══════════════════ COUNTERFEIT ALERT ═══════════════════ */
+    .alert-counterfeit {
+      max-width: 700px;
+      margin: 48px auto 0;
+      text-align: center;
+      padding: 40px 36px;
+      background: rgba(231, 76, 60, 0.05);
+      border: 2px solid var(--crimson);
+      border-radius: var(--radius);
+      animation: fadeUp 0.4s ease forwards, shakeIn 0.5s ease 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-counterfeit::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius);
+      border: 2px solid var(--crimson);
+      animation: pulseBorder 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulseBorder {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+
+    @keyframes shakeIn {
+      0%, 100% { transform: translateX(0); }
+      15%      { transform: translateX(-8px); }
+      30%      { transform: translateX(7px); }
+      45%      { transform: translateX(-5px); }
+      60%      { transform: translateX(4px); }
+      75%      { transform: translateX(-2px); }
+    }
+
+    .alert-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .alert-counterfeit h3 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--crimson);
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .alert-counterfeit p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════ PRODUCT PASSPORT ═══════════════════ */
+    .passport {
+      max-width: 750px;
+      margin: 48px auto 0;
+      background: var(--card-bg-glass);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .passport-header {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.04) 100%);
+      border-bottom: 1px solid var(--gold-dim);
+      padding: 36px;
+      text-align: center;
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald) 0%, #27ae60 100%);
+      margin-bottom: 16px;
+      box-shadow: 0 0 30px rgba(46, 204, 113, 0.25);
+      font-size: 2rem;
+      color: white;
+    }
+
+    .passport-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--emerald);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .passport-body {
+      padding: 36px;
+    }
+
+    .passport-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .passport-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .passport-field {
+      padding: 4px 0;
+    }
+
+    .passport-field .field-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .passport-field .field-value {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .passport-footer {
+      border-top: 1px solid var(--gold-dim);
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .owner-section-title {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .owner-address {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      word-break: break-all;
+    }
+
+    .owner-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--emerald);
+      letter-spacing: 0.05em;
+    }
+
+    .timestamp-row {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ═══════════════════ HIDDEN ═══════════════════ */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ═══════════════════ RESPONSIVE ═══════════════════ */
+    @media (max-width: 900px) {
+      .logo {
+        font-size: 2.4rem;
+      }
+      .verify-hero h2 {
+        font-size: 2rem;
+      }
+      .card {
+        padding: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding-top: 32px;
+      }
+      .logo {
+        font-size: 1.8rem;
+        letter-spacing: 0.25em;
+      }
+      .subtitle {
+        font-size: 0.72rem;
+      }
+      .main {
+        padding: 24px 16px 60px;
+      }
+      .card {
+        padding: 22px;
+      }
+      .passport-header, .passport-body, .passport-footer {
+        padding: 24px;
+      }
+    }
+
+    /* ═══════════════════ SCROLLBAR ═══════════════════ */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.2);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.35);
+    }
+
+    /* ═══════════════════ SELECTION ═══════════════════ */
+    ::selection {
+      background: rgba(212, 175, 55, 0.3);
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="header">
+    <h1 class="logo">Distinto</h1>
+    <p class="subtitle">Autenticação Descentralizada de Luxo</p>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="dashboard" type="button">Painel da Marca</button>
+      <button class="tab-btn" data-tab="verify" type="button">Portal de Verificação</button>
+    </nav>
+    <div class="divider"></div>
+  </header>
+
+  <!-- ═══════════════════ MAIN ═══════════════════ -->
+  <main class="main">
+
+    <!-- ─── TAB 1: BRAND DASHBOARD ─── -->
+    <section id="tab-dashboard" class="tab-content active">
+      <div class="dashboard-grid">
+
+        <!-- Card A — Register Product -->
+        <div class="card">
+          <h2 class="card-title"><span class="icon">◆</span> Registrar Novo Produto</h2>
+          <form id="registerForm" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label" for="regSerial">Número de Série</label>
+              <input class="form-input" type="text" id="regSerial" placeholder="ex.: CHN-255-001" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regName">Nome do Produto</label>
+              <input class="form-input" type="text" id="regName" placeholder="ex.: Chanel 2.55 Reissue" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regType">Tipo do Produto</label>
+              <input class="form-input" type="text" id="regType" placeholder="ex.: Bolsa de Ombro / Couro Caviar" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regColor">Cor</label>
+              <input class="form-input" type="text" id="regColor" placeholder="ex.: Preto com Hardware Dourado" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regDetails">Detalhes Técnicos</label>
+              <textarea class="form-textarea" id="regDetails" placeholder="ex.: Padrão de costura diamante, interior em couro bordeaux" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regQR">Dados do QR Code</label>
+              <input class="form-input" type="text" id="regQR" placeholder="ex.: QR-CHN255-2024-LUXE" required />
+            </div>
+            <button class="btn btn-gold" type="submit" id="registerBtn" style="width:100%;">Registrar na Blockchain</button>
+          </form>
+          <div id="registerResult"></div>
+        </div>
+
+        <!-- Card B — Transfer Ownership -->
+        <div class="card">
+          <h2 class="card-title"><span class="icon">⇄</span> Transferir Propriedade</h2>
+          <form id="transferForm" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label" for="txSerial">Número de Série</label>
+              <input class="form-input" type="text" id="txSerial" placeholder="ex.: CHN-255-001" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="txRecipient">Carteira do Destinatário</label>
+              <select class="form-select" id="txRecipient" required>
+                <option value="" disabled selected>Carregando carteiras…</option>
+              </select>
+            </div>
+            <button class="btn btn-outline" type="submit" id="transferBtn" style="width:100%;">Transferir Ativo</button>
+          </form>
+          <div id="transferResult"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── TAB 2: VERIFICATION PORTAL ─── -->
+    <section id="tab-verify" class="tab-content">
+      <div class="verify-hero">
+        <h2>Verificar Autenticidade</h2>
+        <p>Insira um número de série para verificar sua procedência na blockchain</p>
+        <div class="search-bar">
+          <div class="search-wrapper">
+            <span class="search-icon">⌕</span>
+            <input class="search-input" type="text" id="verifySerial" placeholder="Escaneie o QR Code ou insira o Número de Série…" />
+          </div>
+          <button class="btn btn-verify" type="button" id="verifyBtn">Verificar</button>
+        </div>
+      </div>
+      <div id="verifyResult"></div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ═══════════════════════════════════════════════
+       DISTINTO — Frontend Logic
+       Pure Vanilla JS · No Dependencies
+    ═══════════════════════════════════════════════ */
+
+    (function () {
+      'use strict';
+
+      // ─── DOM REFS ───
+      const $ = (s) => document.querySelector(s);
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabSections = document.querySelectorAll('.tab-content');
+
+      // ─── HELPERS ───
+      function truncateAddress(addr) {
+        if (!addr || addr.length < 12) return addr || '';
+        return addr.slice(0, 6) + '…' + addr.slice(-4);
+      }
+
+      function formatTimestamp(ts) {
+        if (!ts) return '—';
+        // Handle both Unix seconds and already-formatted strings
+        var d;
+        if (typeof ts === 'number') {
+          d = new Date(ts * 1000);
+        } else {
+          d = new Date(ts);
+        }
+        if (isNaN(d.getTime())) return String(ts);
+        return d.toLocaleString(undefined, {
+          year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+      }
+
+      function setLoading(btn, loading, loadingText) {
+        if (loading) {
+          btn.disabled = true;
+          btn.dataset.originalText = btn.innerHTML;
+          btn.innerHTML = '<span class="spinner"></span> ' + (loadingText || 'Processando…');
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+        }
+      }
+
+      function renderResultCard(container, success, html) {
+        container.innerHTML =
+          '<div class="result-card ' + (success ? 'result-success' : 'result-error') + '">' +
+          html +
+          '</div>';
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // ─── TAB SWITCHING ───
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tab = btn.dataset.tab;
+          tabBtns.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          tabSections.forEach(function (s) {
+            s.classList.remove('active');
+          });
+          var target = $('#tab-' + tab);
+          if (target) target.classList.add('active');
+        });
+      });
+
+      // ─── LOAD ACCOUNTS ───
+      function loadAccounts() {
+        fetch('/api/accounts')
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var select = $('#txRecipient');
+            select.innerHTML = '<option value="" disabled selected>Selecione a carteira destinatária</option>';
+            var accounts = data.accounts || data || [];
+            accounts.forEach(function (addr) {
+              var opt = document.createElement('option');
+              opt.value = addr;
+              opt.textContent = truncateAddress(addr);
+              select.appendChild(opt);
+            });
+          })
+          .catch(function () {
+            var select = $('#txRecipient');
+            select.innerHTML = '<option value="" disabled selected>Falha ao carregar carteiras</option>';
+          });
+      }
+
+      loadAccounts();
+
+      // ─── REGISTER PRODUCT ───
+      $('#registerForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = $('#registerBtn');
+        if (btn.disabled) return;
+
+        var body = {
+          serial_number: $('#regSerial').value.trim(),
+          product_name: $('#regName').value.trim(),
+          product_type: $('#regType').value.trim(),
+          color: $('#regColor').value.trim(),
+          technical_details: $('#regDetails').value.trim(),
+          qr_code_data: $('#regQR').value.trim()
+        };
+
+        setLoading(btn, true, 'Processando…');
+
+        fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+          .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+          .then(function (result) {
+            setLoading(btn, false);
+            if (result.ok && !result.data.error) {
+              var d = result.data;
+              var txHash = d.transaction_hash || d.tx_hash || '—';
+              var block = d.block_number || d.block || '—';
+              var serial = d.serial_number || body.serial_number;
+              renderResultCard($('#registerResult'), true,
+                '<div class="result-title">✓ Produto Registrado com Sucesso</div>' +
+                '<div class="result-row"><span class="result-label">Hash da Transação</span><span class="result-value">' + truncateAddress(txHash) + '</span></div>' +
+                '<div class="result-row"><span class="result-label">Número do Bloco</span><span class="result-value">' + block + '</span></div>' +
+                '<div class="result-row"><span class="result-label">Número de Série</span><span class="result-value">' + serial + '</span></div>'
+              );
+              $('#registerForm').reset();
+            } else {
+              renderResultCard($('#registerResult'), false,
+                '<div class="result-title">✕ Falha no Registro</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.9rem;">' + (result.data.error || result.data.message || result.data.detail || 'Ocorreu um erro inesperado.') + '</p>'
+              );
+            }
+          })
+          .catch(function (err) {
+            setLoading(btn, false);
+            renderResultCard($('#registerResult'), false,
+              '<div class="result-title">✕ Erro de Rede</div>' +
+              '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>'
+            );
+          });
+      });
+
+      // ─── TRANSFER OWNERSHIP ───
+      $('#transferForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = $('#transferBtn');
+        if (btn.disabled) return;
+
+        var body = {
+          serial_number: $('#txSerial').value.trim(),
+          new_owner_address: $('#txRecipient').value
+        };
+
+        if (!body.new_owner_address) return;
+
+        setLoading(btn, true, 'Processando…');
+
+        fetch('/api/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+          .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+          .then(function (result) {
+            setLoading(btn, false);
+            if (result.ok && !result.data.error) {
+              var d = result.data;
+              var txHash = d.transaction_hash || d.tx_hash || '—';
+              var block = d.block_number || d.block || '—';
+              renderResultCard($('#transferResult'), true,
+                '<div class="result-title">✓ Propriedade Transferida com Sucesso</div>' +
+                '<div class="result-row"><span class="result-label">Hash da Transação</span><span class="result-value">' + truncateAddress(txHash) + '</span></div>' +
+                '<div class="result-row"><span class="result-label">Número do Bloco</span><span class="result-value">' + block + '</span></div>' +
+                '<div class="result-row"><span class="result-label">Novo Proprietário</span><span class="result-value">' + truncateAddress(body.new_owner_address) + '</span></div>'
+              );
+              $('#transferForm').reset();
+            } else {
+              renderResultCard($('#transferResult'), false,
+                '<div class="result-title">✕ Falha na Transferência</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.9rem;">' + (result.data.error || result.data.message || result.data.detail || 'Ocorreu um erro inesperado.') + '</p>'
+              );
+            }
+          })
+          .catch(function (err) {
+            setLoading(btn, false);
+            renderResultCard($('#transferResult'), false,
+              '<div class="result-title">✕ Erro de Rede</div>' +
+              '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>'
+            );
+          });
+      });
+
+      // ─── VERIFY PRODUCT ───
+      function doVerify() {
+        var serial = $('#verifySerial').value.trim();
+        if (!serial) return;
+        var btn = $('#verifyBtn');
+        if (btn.disabled) return;
+
+        setLoading(btn, true, 'Verificando…');
+
+        fetch('/api/verify/' + encodeURIComponent(serial))
+          .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+          .then(function (result) {
+            setLoading(btn, false);
+            var d = result.data;
+            var container = $('#verifyResult');
+
+            if (!result.ok || d.found === false || d.error) {
+              // ── COUNTERFEIT / NOT FOUND ──
+              container.innerHTML =
+                '<div class="alert-counterfeit">' +
+                  '<span class="alert-icon">⚠</span>' +
+                  '<h3>ALERTA CRÍTICO: PRODUTO NÃO ENCONTRADO NO REGISTRO</h3>' +
+                  '<p>Este número de série não existe na blockchain. Alto risco de falsificação.</p>' +
+                '</div>';
+            } else {
+              // ── AUTHENTIC ──
+              var product = d.product || d;
+              var name = product.product_name || product.name || '—';
+              var type = product.product_type || product.type || '—';
+              var color = product.color || '—';
+              var details = product.technical_details || product.details || '—';
+              var qr = product.qr_code_data || product.qr_code || '—';
+              var owner = product.owner || product.current_owner || d.owner || '—';
+              var ts = product.registered_at || product.timestamp || d.registered_at || d.timestamp || null;
+
+              container.innerHTML =
+                '<div class="passport">' +
+                  '<div class="passport-header">' +
+                    '<div class="verified-badge">✓</div>' +
+                    '<h3>Autenticado</h3>' +
+                  '</div>' +
+                  '<div class="passport-body">' +
+                    '<div class="passport-grid">' +
+                      '<div class="passport-field">' +
+                        '<div class="field-label">Nome do Produto</div>' +
+                        '<div class="field-value">' + name + '</div>' +
+                      '</div>' +
+                      '<div class="passport-field">' +
+                        '<div class="field-label">Tipo do Produto</div>' +
+                        '<div class="field-value">' + type + '</div>' +
+                      '</div>' +
+                      '<div class="passport-field">' +
+                        '<div class="field-label">Cor</div>' +
+                        '<div class="field-value">' + color + '</div>' +
+                      '</div>' +
+                      '<div class="passport-field">' +
+                        '<div class="field-label">Detalhes Técnicos</div>' +
+                        '<div class="field-value">' + details + '</div>' +
+                      '</div>' +
+                      '<div class="passport-field">' +
+                        '<div class="field-label">Dados do QR Code</div>' +
+                        '<div class="field-value" style="font-family:\'SF Mono\',Consolas,monospace;font-size:0.88rem;">' + qr + '</div>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div class="passport-footer">' +
+                    '<div class="owner-section-title">🛡 Proprietário Legal Atual</div>' +
+                    '<div class="owner-address">' +
+                      owner +
+                      ' <span class="owner-badge">✓ Verificado</span>' +
+                    '</div>' +
+                    (ts
+                      ? '<div class="timestamp-row">⏱ Registrado em: ' + formatTimestamp(ts) + '</div>'
+                      : '') +
+                  '</div>' +
+                '</div>';
+            }
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          })
+          .catch(function (err) {
+            setLoading(btn, false);
+            $('#verifyResult').innerHTML =
+              '<div class="result-card result-error" style="max-width:700px;margin:40px auto 0;">' +
+                '<div class="result-title">✕ Erro na Verificação</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>' +
+              '</div>';
+          });
+      }
+
+      $('#verifyBtn').addEventListener('click', doVerify);
+      $('#verifySerial').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); doVerify(); }
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

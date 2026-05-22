@@ -1,0 +1,20 @@
+services:
+  ganache:
+    image: trufflesuite/ganache:latest
+    ports:
+      - "8545:8545"
+    command: >
+      --accounts 10
+      --defaultBalanceEther 100
+      --deterministic
+      --host 0.0.0.0
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ganache
+    environment:
+      - PYTHONUNBUFFERED=1
+      - GANACHE_URL=http://ganache:8545
