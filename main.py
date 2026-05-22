@@ -24,13 +24,13 @@ from solcx import compile_standard, install_solc
 # ---------------------------------------------------------------------------
 # Hugging Face Vision Transformer Configuration
 # ---------------------------------------------------------------------------
+# Devido a limitações da rede corporativa e ao endpoint Serverless da HF
+# estar desativado para este modelo, a inferência roda localmente.
+# O modelo será carregado na memória *sob demanda* (lazy load) para
+# economizar RAM na máquina do host.
 
-HF_API_URL = "https://router.huggingface.co/models/felipeoya/meu-agente-de-bolsas-luxo"
-HF_TOKEN   = os.getenv("HF_TOKEN", "")
-HF_HEADERS = {
-    "Authorization": f"Bearer {HF_TOKEN}",
-    "Content-Type": "application/octet-stream",
-}
+HF_MODEL_ID = "felipeoya/meu-agente-de-bolsas-luxo"
+HF_TOKEN    = os.getenv("HF_TOKEN", "")
 
 
 # ---------------------------------------------------------------------------
@@ -276,7 +276,7 @@ async def verify_item(serial_number: str):
 async def verify_image(serial_number: str, file: UploadFile = File(...)):
     """
     Dual-layer authentication:
-      1. Stochastic layer  — Google ViT on Hugging Face classifies the uploaded image.
+      1. Stochastic layer  — Google ViT classifies the uploaded image locally.
       2. Deterministic layer — Smart contract returns immutable on-chain metadata.
     The two results are cross-validated to produce a final veredict.
     """
@@ -286,23 +286,36 @@ async def verify_image(serial_number: str, file: UploadFile = File(...)):
     image_bytes = await file.read()
     print(f"[VERIFY-IMAGE] Image size: {len(image_bytes)} bytes")
 
-    # ── Step 2: Call Hugging Face ViT ─────────────────────────────────────────
+    # ── Step 2: Local ViT Inference (Lazy Load) ───────────────────────────────
+    # The model is loaded on-demand to save RAM on low-spec machines.
+    # After inference, memory is freed immediately via gc.collect().
     vit_result = None
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            print(f"[VERIFY-IMAGE] → Dispatching image to Hugging Face ViT…")
-            hf_response = await client.post(HF_API_URL, content=image_bytes, headers=HF_HEADERS)
+        print(f"[VERIFY-IMAGE] → Loading Hugging Face ViT model locally into RAM (lazy load)...")
+        import gc
+        import io
+        from PIL import Image
+        from transformers import pipeline
 
-        if hf_response.status_code == 503:
-            print("[VERIFY-IMAGE] ⚠ Hugging Face model is loading (503). Returning loading status.")
-            return {
-                "status": "loading",
-                "message": "O modelo de IA está inicializando. Aguarde alguns segundos e tente novamente.",
-            }
+        img = Image.open(io.BytesIO(image_bytes))
 
-        hf_response.raise_for_status()
-        predictions = hf_response.json()
-        print(f"[VERIFY-IMAGE] ← HF raw predictions: {predictions}")
+        # Initialize the pipeline (downloading weights if first time)
+        pipe = pipeline(
+            "image-classification",
+            model=HF_MODEL_ID,
+            token=HF_TOKEN,
+            device=-1  # Force CPU
+        )
+
+        print("[VERIFY-IMAGE] → Running inference on image...")
+        predictions = pipe(img)
+
+        # Free memory immediately to protect 4GB RAM machines
+        del pipe
+        del img
+        gc.collect()
+
+        print(f"[VERIFY-IMAGE] ← Local raw predictions: {predictions}")
 
         # Parse top prediction
         if isinstance(predictions, list) and len(predictions) > 0:
@@ -317,12 +330,6 @@ async def verify_image(serial_number: str, file: UploadFile = File(...)):
         print(f"[VERIFY-IMAGE] ViT → detected_model='{detected_model}'  proximity={proximity_pct}%")
         vit_result = {"detected_model": detected_model, "proximity_pct": proximity_pct}
 
-    except httpx.TimeoutException:
-        print("[VERIFY-IMAGE] ✕ Hugging Face request timed out after 30s")
-        raise HTTPException(status_code=504, detail="A requisição ao modelo de IA expirou. Tente novamente.")
-    except httpx.HTTPStatusError as exc:
-        print(f"[VERIFY-IMAGE] ✕ HF HTTP error: {exc.response.status_code}")
-        raise HTTPException(status_code=502, detail=f"Erro na API de visão computacional: {exc.response.text}")
     except Exception as exc:
         print(f"[VERIFY-IMAGE] ✕ Unexpected ViT error: {exc}")
         raise HTTPException(status_code=500, detail=str(exc))
@@ -343,8 +350,16 @@ async def verify_image(serial_number: str, file: UploadFile = File(...)):
 
     # ── Step 4: Cross-validate & compute veredict ─────────────────────────────
     def _normalize(s: str) -> str:
-        """Lowercase + collapse whitespace for flexible label comparison."""
-        return re.sub(r"\s+", " ", s.strip().lower())
+        """Lowercase + replace punctuation + collapse whitespace.
+
+        ViT labels often use snake_case (e.g. 'chanel_255') while
+        the blockchain stores human-readable names ('Chanel 2.55').
+        Removing dots and separators ensures correct matching.
+        """
+        s = s.strip().lower()
+        # Remove dots so '2.55' becomes '255', replace underscores/hyphens with spaces
+        s = s.replace(".", "").replace("_", " ").replace("-", " ")
+        return re.sub(r"\s+", " ", s)
 
     if not chain_found:
         # Item not registered on-chain at all
@@ -381,7 +396,7 @@ async def verify_image(serial_number: str, file: UploadFile = File(...)):
         },
         # Blockchain layer
         "blockchain": {
-            "found":       chain_found,
+            "found":         chain_found,
             "product_name":  chain_name,
             "product_type":  chain_result[3] if chain_found else None,
             "color":         chain_result[4] if chain_found else None,

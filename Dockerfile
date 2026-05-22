@@ -9,7 +9,9 @@ WORKDIR /app
 
 # Install Python dependencies (cached layer)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install CPU-only PyTorch first to save space, then install the rest
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Pre-install Solidity compiler so it's ready at runtime
 RUN python -c "from solcx import install_solc; install_solc('0.8.21')"

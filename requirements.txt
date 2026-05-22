@@ -5,3 +5,5 @@ py-solc-x
 pydantic
 httpx
 python-multipart
+transformers
+Pillow

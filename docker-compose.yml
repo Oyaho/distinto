@@ -18,6 +18,9 @@ services:
     dns:
       - 8.8.8.8
       - 8.8.4.4
+    # Corporate DNS may not resolve router.huggingface.co — inject IPs directly
+    extra_hosts:
+      - "router.huggingface.co:108.139.119.116"
     environment:
       - PYTHONUNBUFFERED=1
       - GANACHE_URL=http://ganache:8545
