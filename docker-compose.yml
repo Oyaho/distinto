@@ -18,3 +18,4 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - GANACHE_URL=http://ganache:8545
+      - HF_TOKEN=${HF_TOKEN}

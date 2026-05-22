@@ -3,3 +3,5 @@ uvicorn[standard]
 web3
 py-solc-x
 pydantic
+httpx
+python-multipart

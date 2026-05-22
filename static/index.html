@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DISTINTO — Autenticação Descentralizada de Luxo</title>
+  <meta name="description" content="Plataforma de autenticação de bolsas de luxo com blockchain e inteligência artificial visional." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -17,8 +18,12 @@
       --gold-dim: rgba(212, 175, 55, 0.15);
       --gold-glow: rgba(212, 175, 55, 0.35);
       --gold-soft: rgba(212, 175, 55, 0.08);
+      --bronze: #cd7f32;
+      --bronze-dim: rgba(205, 127, 50, 0.2);
       --emerald: #2ecc71;
       --emerald-dim: rgba(46, 204, 113, 0.15);
+      --amber: #f39c12;
+      --amber-dim: rgba(243, 156, 18, 0.15);
       --crimson: #e74c3c;
       --crimson-dim: rgba(231, 76, 60, 0.12);
       --text-primary: #f5f5f5;
@@ -522,6 +527,164 @@
       }
     }
 
+    /* ═══════════════════ IMAGE DROPZONE ═══════════════════ */
+    .dropzone-wrapper {
+      max-width: 640px;
+      margin: 20px auto 0;
+    }
+
+    .dropzone-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dropzone-label .optional-tag {
+      font-size: 0.68rem;
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 1px 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .dropzone {
+      position: relative;
+      border: 1.5px dashed var(--bronze-dim);
+      border-radius: var(--radius-sm);
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: rgba(205, 127, 50, 0.03);
+      overflow: hidden;
+    }
+
+    .dropzone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity var(--transition);
+      pointer-events: none;
+    }
+
+    .dropzone:hover,
+    .dropzone.drag-over {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.06);
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.1);
+    }
+
+    .dropzone:hover::before,
+    .dropzone.drag-over::before {
+      opacity: 1;
+    }
+
+    .dropzone-icon {
+      margin-bottom: 10px;
+      color: var(--bronze);
+      transition: color var(--transition), transform var(--transition);
+    }
+
+    .dropzone:hover .dropzone-icon {
+      color: var(--gold);
+      transform: scale(1.05);
+    }
+
+    .dropzone-text {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-text strong {
+      color: var(--gold);
+    }
+
+    .dropzone-hint {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    #verifyImageInput {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* ── File Preview ── */
+    .dropzone-preview {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      background: rgba(212, 175, 55, 0.06);
+      border: 1px solid var(--gold-dim);
+      border-radius: 8px;
+      margin-top: 12px;
+      animation: fadeUp 0.3s ease forwards;
+    }
+
+    .dropzone-preview.visible {
+      display: flex;
+    }
+
+    .preview-thumb {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--gold-dim);
+    }
+
+    .preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .preview-name {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-size {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .preview-clear {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color var(--transition);
+      flex-shrink: 0;
+    }
+
+    .preview-clear:hover {
+      color: var(--crimson);
+    }
+
     /* ═══════════════════ COUNTERFEIT ALERT ═══════════════════ */
     .alert-counterfeit {
       max-width: 700px;
@@ -581,9 +744,9 @@
       line-height: 1.6;
     }
 
-    /* ═══════════════════ PRODUCT PASSPORT ═══════════════════ */
+    /* ═══════════════════ DUAL PASSPORT ═══════════════════ */
     .passport {
-      max-width: 750px;
+      max-width: 820px;
       margin: 48px auto 0;
       background: var(--card-bg-glass);
       backdrop-filter: blur(10px);
@@ -601,6 +764,7 @@
       text-align: center;
     }
 
+    /* ── Verdict Badge ── */
     .verified-badge {
       display: inline-flex;
       align-items: center;
@@ -608,35 +772,189 @@
       width: 68px;
       height: 68px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--emerald) 0%, #27ae60 100%);
       margin-bottom: 16px;
-      box-shadow: 0 0 30px rgba(46, 204, 113, 0.25);
       font-size: 2rem;
       color: white;
+    }
+
+    .badge-authentic {
+      background: linear-gradient(135deg, var(--emerald) 0%, #27ae60 100%);
+      box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
+    }
+
+    .badge-suspect {
+      background: linear-gradient(135deg, var(--amber) 0%, #d68910 100%);
+      box-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
+    }
+
+    .badge-divergent,
+    .badge-not_found {
+      background: linear-gradient(135deg, var(--crimson) 0%, #c0392b 100%);
+      box-shadow: 0 0 30px rgba(231, 76, 60, 0.3);
     }
 
     .passport-header h3 {
       font-family: var(--font-heading);
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--emerald);
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .passport-body {
-      padding: 36px;
+    .h3-authentic  { color: var(--emerald); }
+    .h3-suspect    { color: var(--amber); }
+    .h3-divergent,
+    .h3-not_found  { color: var(--crimson); }
+
+    /* ── Passport Section Dividers ── */
+    .passport-section {
+      padding: 28px 36px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
+    .passport-section:last-child {
+      border-bottom: none;
+    }
+
+    .passport-section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .passport-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-dim), transparent);
+    }
+
+    /* ── Radial Proximity Ring ── */
+    .proximity-row {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .radial-ring-container {
+      flex-shrink: 0;
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .radial-ring-svg {
+      width: 100px;
+      height: 100px;
+      transform: rotate(-90deg);
+    }
+
+    .radial-ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.06);
+      stroke-width: 8;
+    }
+
+    .radial-ring-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.5s ease;
+    }
+
+    .radial-ring-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .radial-pct {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .radial-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .ai-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ai-detected-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .ai-badge-icon {
+      font-size: 0.9rem;
+    }
+
+    .ai-confidence-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+      max-width: 240px;
+    }
+
+    .ai-confidence-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── Blockchain Grid ── */
     .passport-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 20px;
     }
 
     @media (max-width: 600px) {
       .passport-grid {
         grid-template-columns: 1fr;
+      }
+      .proximity-row {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
@@ -660,15 +978,6 @@
       line-height: 1.5;
     }
 
-    .passport-footer {
-      border-top: 1px solid var(--gold-dim);
-      padding: 28px 36px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
     .owner-section-title {
       font-size: 0.75rem;
       font-weight: 500;
@@ -679,12 +988,12 @@
       align-items: center;
       gap: 8px;
       width: 100%;
-      margin-bottom: 4px;
+      margin-bottom: 10px;
     }
 
     .owner-address {
       font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-primary);
       background: rgba(255, 255, 255, 0.04);
       padding: 10px 16px;
@@ -704,6 +1013,7 @@
       font-weight: 600;
       color: var(--emerald);
       letter-spacing: 0.05em;
+      flex-shrink: 0;
     }
 
     .timestamp-row {
@@ -714,6 +1024,105 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    /* ── Final Verdict Banner ── */
+    .veredict-banner {
+      border-radius: var(--radius-sm);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: fadeUp 0.4s ease 0.2s both;
+    }
+
+    .veredict-banner-authentic {
+      background: rgba(46, 204, 113, 0.08);
+      border: 1.5px solid rgba(46, 204, 113, 0.3);
+    }
+
+    .veredict-banner-suspect {
+      background: rgba(243, 156, 18, 0.08);
+      border: 1.5px solid rgba(243, 156, 18, 0.3);
+    }
+
+    .veredict-banner-divergent,
+    .veredict-banner-not_found {
+      background: rgba(231, 76, 60, 0.08);
+      border: 1.5px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .veredict-banner-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .veredict-banner-body { flex: 1; }
+
+    .veredict-banner-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 3px;
+    }
+
+    .veredict-authentic  .veredict-banner-title { color: var(--emerald); }
+    .veredict-suspect    .veredict-banner-title { color: var(--amber); }
+    .veredict-divergent  .veredict-banner-title,
+    .veredict-not_found  .veredict-banner-title { color: var(--crimson); }
+
+    .veredict-banner-sub {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── AI Loading Spinner (full-card overlay) ── */
+    .ai-loading-card {
+      max-width: 820px;
+      margin: 48px auto 0;
+      background: var(--card-bg-glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius);
+      padding: 60px 36px;
+      text-align: center;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .ai-loading-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(212, 175, 55, 0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .ai-loading-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .ai-loading-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Loading status (model cold start) ── */
+    .ai-loading-hint {
+      margin-top: 40px;
+      padding: 16px 20px;
+      background: rgba(243, 156, 18, 0.06);
+      border: 1px solid rgba(243, 156, 18, 0.2);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--amber);
+      text-align: center;
     }
 
     /* ═══════════════════ HIDDEN ═══════════════════ */
@@ -731,6 +1140,9 @@
       }
       .card {
         padding: 28px;
+      }
+      .passport-section {
+        padding: 22px 24px;
       }
     }
 
@@ -751,7 +1163,7 @@
       .card {
         padding: 22px;
       }
-      .passport-header, .passport-body, .passport-footer {
+      .passport-header {
         padding: 24px;
       }
     }
@@ -857,7 +1269,9 @@
     <section id="tab-verify" class="tab-content">
       <div class="verify-hero">
         <h2>Verificar Autenticidade</h2>
-        <p>Insira um número de série para verificar sua procedência na blockchain</p>
+        <p>Insira o número de série e, opcionalmente, envie uma foto da peça para análise com Inteligência Artificial Visional</p>
+
+        <!-- Serial Number Search (preserved) -->
         <div class="search-bar">
           <div class="search-wrapper">
             <span class="search-icon">⌕</span>
@@ -865,6 +1279,38 @@
           </div>
           <button class="btn btn-verify" type="button" id="verifyBtn">Verificar</button>
         </div>
+
+        <!-- Image Dropzone (new AI layer) -->
+        <div class="dropzone-wrapper">
+          <div class="dropzone-label">
+            Análise Visual por IA
+            <span class="optional-tag">Opcional · Adiciona análise ViT</span>
+          </div>
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="verifyImageInput" accept=".jpg,.jpeg,.png" />
+            <div class="dropzone-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+            <p class="dropzone-text">
+              <strong>Arraste uma foto</strong> ou clique para selecionar
+            </p>
+            <p class="dropzone-hint">Suporta JPG e PNG · Análise pelo modelo Google ViT</p>
+          </div>
+
+          <!-- Preview -->
+          <div class="dropzone-preview" id="dropzonePreview">
+            <img class="preview-thumb" id="previewThumb" src="" alt="Preview" />
+            <div class="preview-info">
+              <div class="preview-name" id="previewName"></div>
+              <div class="preview-size" id="previewSize"></div>
+            </div>
+            <button class="preview-clear" id="previewClear" title="Remover imagem">✕</button>
+          </div>
+        </div>
+
       </div>
       <div id="verifyResult"></div>
     </section>
@@ -874,7 +1320,7 @@
   <script>
     /* ═══════════════════════════════════════════════
        DISTINTO — Frontend Logic
-       Pure Vanilla JS · No Dependencies
+       Dual-layer: Google ViT + Blockchain
     ═══════════════════════════════════════════════ */
 
     (function () {
@@ -882,8 +1328,17 @@
 
       // ─── DOM REFS ───
       const $ = (s) => document.querySelector(s);
-      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabBtns     = document.querySelectorAll('.tab-btn');
       const tabSections = document.querySelectorAll('.tab-content');
+      const dropzone    = $('#dropzone');
+      const fileInput   = $('#verifyImageInput');
+      const preview     = $('#dropzonePreview');
+      const previewThumb = $('#previewThumb');
+      const previewName  = $('#previewName');
+      const previewSize  = $('#previewSize');
+      const previewClear = $('#previewClear');
+
+      let selectedFile = null;
 
       // ─── HELPERS ───
       function truncateAddress(addr) {
@@ -893,7 +1348,6 @@
 
       function formatTimestamp(ts) {
         if (!ts) return '—';
-        // Handle both Unix seconds and already-formatted strings
         var d;
         if (typeof ts === 'number') {
           d = new Date(ts * 1000);
@@ -905,6 +1359,12 @@
           year: 'numeric', month: 'long', day: 'numeric',
           hour: '2-digit', minute: '2-digit', second: '2-digit'
         });
+      }
+
+      function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
       }
 
       function setLoading(btn, loading, loadingText) {
@@ -932,9 +1392,7 @@
           var tab = btn.dataset.tab;
           tabBtns.forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
-          tabSections.forEach(function (s) {
-            s.classList.remove('active');
-          });
+          tabSections.forEach(function (s) { s.classList.remove('active'); });
           var target = $('#tab-' + tab);
           if (target) target.classList.add('active');
         });
@@ -970,12 +1428,12 @@
         if (btn.disabled) return;
 
         var body = {
-          serial_number: $('#regSerial').value.trim(),
-          product_name: $('#regName').value.trim(),
-          product_type: $('#regType').value.trim(),
-          color: $('#regColor').value.trim(),
+          serial_number:    $('#regSerial').value.trim(),
+          product_name:     $('#regName').value.trim(),
+          product_type:     $('#regType').value.trim(),
+          color:            $('#regColor').value.trim(),
           technical_details: $('#regDetails').value.trim(),
-          qr_code_data: $('#regQR').value.trim()
+          qr_code_data:     $('#regQR').value.trim()
         };
 
         setLoading(btn, true, 'Processando…');
@@ -991,7 +1449,7 @@
             if (result.ok && !result.data.error) {
               var d = result.data;
               var txHash = d.transaction_hash || d.tx_hash || '—';
-              var block = d.block_number || d.block || '—';
+              var block  = d.block_number || d.block || '—';
               var serial = d.serial_number || body.serial_number;
               renderResultCard($('#registerResult'), true,
                 '<div class="result-title">✓ Produto Registrado com Sucesso</div>' +
@@ -1023,7 +1481,7 @@
         if (btn.disabled) return;
 
         var body = {
-          serial_number: $('#txSerial').value.trim(),
+          serial_number:     $('#txSerial').value.trim(),
           new_owner_address: $('#txRecipient').value
         };
 
@@ -1042,7 +1500,7 @@
             if (result.ok && !result.data.error) {
               var d = result.data;
               var txHash = d.transaction_hash || d.tx_hash || '—';
-              var block = d.block_number || d.block || '—';
+              var block  = d.block_number || d.block || '—';
               renderResultCard($('#transferResult'), true,
                 '<div class="result-title">✓ Propriedade Transferida com Sucesso</div>' +
                 '<div class="result-row"><span class="result-label">Hash da Transação</span><span class="result-value">' + truncateAddress(txHash) + '</span></div>' +
@@ -1066,6 +1524,225 @@
           });
       });
 
+      // ─── DROPZONE LOGIC ───
+      function handleFile(file) {
+        if (!file) return;
+        if (!file.type.match(/image\/(jpeg|png)/)) {
+          alert('Por favor selecione uma imagem JPG ou PNG.');
+          return;
+        }
+        selectedFile = file;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          previewThumb.src = e.target.result;
+          previewName.textContent = file.name;
+          previewSize.textContent = formatBytes(file.size);
+          preview.classList.add('visible');
+          console.log('[DISTINTO] Image selected:', file.name, formatBytes(file.size));
+        };
+        reader.readAsDataURL(file);
+      }
+
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          handleFile(fileInput.files[0]);
+        }
+      });
+
+      dropzone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+      });
+
+      dropzone.addEventListener('dragleave', function () {
+        dropzone.classList.remove('drag-over');
+      });
+
+      dropzone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        var files = e.dataTransfer.files;
+        if (files && files[0]) {
+          handleFile(files[0]);
+        }
+      });
+
+      previewClear.addEventListener('click', function (e) {
+        e.stopPropagation();
+        selectedFile = null;
+        fileInput.value = '';
+        preview.classList.remove('visible');
+        previewThumb.src = '';
+        console.log('[DISTINTO] Image cleared.');
+      });
+
+      // ─── RADIAL RING BUILDER ───
+      function buildRadialRing(pct, code) {
+        var radius   = 40;
+        var circ     = 2 * Math.PI * radius;  // ~251.33
+        var dashOff  = circ * (1 - pct / 100);
+
+        // Color by code / threshold
+        var strokeColor;
+        if (code === 'authentic')            strokeColor = '#2ecc71';
+        else if (code === 'suspect')         strokeColor = '#f39c12';
+        else                                 strokeColor = '#e74c3c';
+
+        var confBarColor = strokeColor;
+
+        return (
+          '<div class="radial-ring-container" id="radialRingContainer">' +
+            '<svg class="radial-ring-svg" viewBox="0 0 100 100">' +
+              '<circle class="radial-ring-bg" cx="50" cy="50" r="' + radius + '" />' +
+              '<circle class="radial-ring-fill" id="radialFill" cx="50" cy="50" r="' + radius + '"' +
+                ' stroke="' + strokeColor + '"' +
+                ' stroke-dasharray="' + circ.toFixed(2) + '"' +
+                ' stroke-dashoffset="' + circ.toFixed(2) + '"' +  /* start at 0 for animation */
+                ' data-target-offset="' + dashOff.toFixed(2) + '" />' +
+            '</svg>' +
+            '<div class="radial-ring-label">' +
+              '<span class="radial-pct" id="radialPct">0%</span>' +
+              '<span class="radial-sub">IA</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      // Animate ring after insertion
+      function animateRing(pct, code) {
+        var radius  = 40;
+        var circ    = 2 * Math.PI * radius;
+        var dashOff = circ * (1 - pct / 100);
+        var fill    = document.getElementById('radialFill');
+        var label   = document.getElementById('radialPct');
+        if (!fill || !label) return;
+
+        requestAnimationFrame(function () {
+          fill.style.strokeDashoffset = dashOff.toFixed(2);
+        });
+
+        // Count-up label
+        var start = 0;
+        var duration = 1200;
+        var startTime = null;
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          var progress = Math.min((ts - startTime) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = eased * pct;
+          label.textContent = current.toFixed(1) + '%';
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      // ─── RENDER DUAL PASSPORT (AI + Blockchain) ───
+      function renderDualPassport(data) {
+        var ai    = data.ai || {};
+        var chain = data.blockchain || {};
+        var code  = data.veredict_code || 'not_found';
+        var pct   = ai.proximity_pct || 0;
+        var model = ai.detected_model || 'Desconhecido';
+
+        // Verdict display config
+        var verdictConfig = {
+          authentic:  { icon: '✓', title: 'VERIFICADO — AUTÊNTICO', sub: 'Assinatura visual e registro on-chain coincidem. Alta confiança de autenticidade.' },
+          suspect:    { icon: '⚠', title: 'ITEM SUSPEITO', sub: 'Registro blockchain encontrado, mas proximidade visual está abaixo do limiar. Possível superfake ou réplica de alta qualidade.' },
+          divergent:  { icon: '✕', title: 'FALHA NA AUTENTICAÇÃO', sub: 'O modelo visual detectado diverge do registro na blockchain. Possível clonagem de tag ou adulteração.' },
+          not_found:  { icon: '✕', title: 'NÃO REGISTRADO', sub: 'Este número de série não existe na blockchain. Alto risco de falsificação.' }
+        };
+        var vc = verdictConfig[code] || verdictConfig.not_found;
+
+        // Badge class
+        var ringHtml = buildRadialRing(pct, code);
+
+        // Confidence bar color
+        var barColor = code === 'authentic' ? '#2ecc71' : code === 'suspect' ? '#f39c12' : '#e74c3c';
+
+        var html = '<div class="passport">';
+
+        // ── Header ──
+        html += '<div class="passport-header">';
+        html +=   '<div class="verified-badge badge-' + code + '">' + vc.icon + '</div>';
+        html +=   '<h3 class="h3-' + code + '">' + vc.title + '</h3>';
+        html += '</div>';
+
+        // ── Section 1: AI Vision Layer ──
+        html += '<div class="passport-section">';
+        html +=   '<div class="passport-section-title">🤖 Análise de Atributos Físicos — Camada IA</div>';
+        html +=   '<div class="proximity-row">';
+        html +=     ringHtml;
+        html +=     '<div class="ai-details">';
+        html +=       '<div class="ai-detected-label">Modelo detectado pelo Google ViT</div>';
+        html +=       '<div class="ai-badge"><span class="ai-badge-icon">👜</span>' + escapeHtml(model) + '</div>';
+        html +=       '<div class="ai-detected-label" style="margin-top:8px;">Índice de proximidade visual</div>';
+        html +=       '<div class="ai-confidence-bar"><div class="ai-confidence-fill" id="confBar" style="width:0%;background:' + barColor + '"></div></div>';
+        html +=       '<div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">' + pct.toFixed(2) + '% de correspondência</div>';
+        html +=     '</div>';
+        html +=   '</div>';
+        html += '</div>';
+
+        // ── Section 2: Blockchain Provenance ──
+        html += '<div class="passport-section">';
+        html +=   '<div class="passport-section-title">🔗 Proveniência Documental — Camada Blockchain</div>';
+        if (chain.found) {
+          html += '<div class="passport-grid">';
+          html +=   '<div class="passport-field"><div class="field-label">Nome do Produto</div><div class="field-value">' + escapeHtml(chain.product_name || '—') + '</div></div>';
+          html +=   '<div class="passport-field"><div class="field-label">Tipo do Produto</div><div class="field-value">' + escapeHtml(chain.product_type || '—') + '</div></div>';
+          if (chain.color) {
+            html += '<div class="passport-field"><div class="field-label">Cor</div><div class="field-value">' + escapeHtml(chain.color) + '</div></div>';
+          }
+          html += '</div>';
+          html += '<div style="margin-top:20px;">';
+          html +=   '<div class="owner-section-title">🛡 Proprietário Legal Atual</div>';
+          html +=   '<div class="owner-address">' + escapeHtml(chain.current_owner || '—') + '<span class="owner-badge">✓ Verificado</span></div>';
+          if (chain.registered_at) {
+            html += '<div class="timestamp-row">⏱ Registrado em: ' + formatTimestamp(chain.registered_at) + '</div>';
+          }
+          html += '</div>';
+        } else {
+          html += '<p style="color:var(--text-muted);font-size:0.9rem;">Número de série não encontrado na blockchain.</p>';
+        }
+        html += '</div>';
+
+        // ── Section 3: Final Verdict Banner ──
+        html += '<div class="passport-section">';
+        html +=   '<div class="passport-section-title">⚖ Veredicto Final do Sistema</div>';
+        html +=   '<div class="veredict-banner veredict-banner-' + code + ' veredict-' + code + '">';
+        html +=     '<div class="veredict-banner-icon">' + vc.icon + '</div>';
+        html +=     '<div class="veredict-banner-body">';
+        html +=       '<div class="veredict-banner-title">' + vc.title + '</div>';
+        html +=       '<div class="veredict-banner-sub">' + vc.sub + '</div>';
+        html +=     '</div>';
+        html +=   '</div>';
+        html += '</div>';
+
+        html += '</div>'; // .passport
+
+        return html;
+      }
+
+      // ─── ESCAPE HTML ───
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // ─── VERIFY — LOADING CARD ───
+      function showLoadingCard(container, msg) {
+        container.innerHTML =
+          '<div class="ai-loading-card">' +
+            '<div class="ai-loading-spinner"></div>' +
+            '<div class="ai-loading-title">' + (msg || 'Analisando…') + '</div>' +
+            '<div class="ai-loading-sub">Aguarde enquanto o sistema consulta o modelo ViT e a blockchain</div>' +
+          '</div>';
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       // ─── VERIFY PRODUCT ───
       function doVerify() {
         var serial = $('#verifySerial').value.trim();
@@ -1073,86 +1750,134 @@
         var btn = $('#verifyBtn');
         if (btn.disabled) return;
 
+        var container = $('#verifyResult');
         setLoading(btn, true, 'Verificando…');
 
-        fetch('/api/verify/' + encodeURIComponent(serial))
-          .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
-          .then(function (result) {
-            setLoading(btn, false);
-            var d = result.data;
-            var container = $('#verifyResult');
+        if (selectedFile) {
+          // ── DUAL-LAYER: ViT + Blockchain ──
+          console.log('[DISTINTO] Starting dual-layer verification. Serial:', serial, 'File:', selectedFile.name);
+          showLoadingCard(container, 'Análise dual-layer em progresso…');
 
-            if (!result.ok || d.found === false || d.error) {
-              // ── COUNTERFEIT / NOT FOUND ──
-              container.innerHTML =
-                '<div class="alert-counterfeit">' +
-                  '<span class="alert-icon">⚠</span>' +
-                  '<h3>ALERTA CRÍTICO: PRODUTO NÃO ENCONTRADO NO REGISTRO</h3>' +
-                  '<p>Este número de série não existe na blockchain. Alto risco de falsificação.</p>' +
-                '</div>';
-            } else {
-              // ── AUTHENTIC ──
-              var product = d.product || d;
-              var name = product.product_name || product.name || '—';
-              var type = product.product_type || product.type || '—';
-              var color = product.color || '—';
-              var details = product.technical_details || product.details || '—';
-              var qr = product.qr_code_data || product.qr_code || '—';
-              var owner = product.owner || product.current_owner || d.owner || '—';
-              var ts = product.registered_at || product.timestamp || d.registered_at || d.timestamp || null;
+          var formData = new FormData();
+          formData.append('file', selectedFile);
 
-              container.innerHTML =
-                '<div class="passport">' +
-                  '<div class="passport-header">' +
-                    '<div class="verified-badge">✓</div>' +
-                    '<h3>Autenticado</h3>' +
-                  '</div>' +
-                  '<div class="passport-body">' +
-                    '<div class="passport-grid">' +
-                      '<div class="passport-field">' +
-                        '<div class="field-label">Nome do Produto</div>' +
-                        '<div class="field-value">' + name + '</div>' +
-                      '</div>' +
-                      '<div class="passport-field">' +
-                        '<div class="field-label">Tipo do Produto</div>' +
-                        '<div class="field-value">' + type + '</div>' +
-                      '</div>' +
-                      '<div class="passport-field">' +
-                        '<div class="field-label">Cor</div>' +
-                        '<div class="field-value">' + color + '</div>' +
-                      '</div>' +
-                      '<div class="passport-field">' +
-                        '<div class="field-label">Detalhes Técnicos</div>' +
-                        '<div class="field-value">' + details + '</div>' +
-                      '</div>' +
-                      '<div class="passport-field">' +
-                        '<div class="field-label">Dados do QR Code</div>' +
-                        '<div class="field-value" style="font-family:\'SF Mono\',Consolas,monospace;font-size:0.88rem;">' + qr + '</div>' +
-                      '</div>' +
-                    '</div>' +
-                  '</div>' +
-                  '<div class="passport-footer">' +
-                    '<div class="owner-section-title">🛡 Proprietário Legal Atual</div>' +
-                    '<div class="owner-address">' +
-                      owner +
-                      ' <span class="owner-badge">✓ Verificado</span>' +
-                    '</div>' +
-                    (ts
-                      ? '<div class="timestamp-row">⏱ Registrado em: ' + formatTimestamp(ts) + '</div>'
-                      : '') +
-                  '</div>' +
-                '</div>';
-            }
-            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          fetch('/api/verify-image/' + encodeURIComponent(serial), {
+            method: 'POST',
+            body: formData
           })
-          .catch(function (err) {
-            setLoading(btn, false);
-            $('#verifyResult').innerHTML =
-              '<div class="result-card result-error" style="max-width:700px;margin:40px auto 0;">' +
-                '<div class="result-title">✕ Erro na Verificação</div>' +
-                '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>' +
-              '</div>';
-          });
+            .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+            .then(function (result) {
+              setLoading(btn, false);
+              var d = result.data;
+              console.log('[DISTINTO] Dual-layer response:', JSON.stringify(d));
+
+              if (!result.ok) {
+                container.innerHTML =
+                  '<div class="result-card result-error" style="max-width:820px;margin:40px auto 0;">' +
+                    '<div class="result-title">✕ Erro na Verificação</div>' +
+                    '<p style="color:var(--text-secondary);font-size:0.9rem;">' + escapeHtml(d.detail || 'Ocorreu um erro inesperado.') + '</p>' +
+                  '</div>';
+                return;
+              }
+
+              // Handle model cold-start
+              if (d.status === 'loading') {
+                container.innerHTML =
+                  '<div class="ai-loading-card">' +
+                    '<div class="ai-loading-spinner"></div>' +
+                    '<div class="ai-loading-title">Modelo ViT Inicializando</div>' +
+                    '<div class="ai-loading-sub">' + escapeHtml(d.message || '') + '</div>' +
+                    '<div class="ai-loading-hint">⏳ O modelo está em cold start. Tente novamente em 20–30 segundos.</div>' +
+                  '</div>';
+                return;
+              }
+
+              container.innerHTML = renderDualPassport(d);
+              container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+              // Animate ring + bar after DOM paint
+              requestAnimationFrame(function () {
+                var pct  = (d.ai && d.ai.proximity_pct) || 0;
+                var code = d.veredict_code || 'not_found';
+                animateRing(pct, code);
+                var confBar = document.getElementById('confBar');
+                if (confBar) {
+                  setTimeout(function () { confBar.style.width = pct + '%'; }, 50);
+                }
+              });
+            })
+            .catch(function (err) {
+              setLoading(btn, false);
+              console.error('[DISTINTO] Fetch error:', err);
+              container.innerHTML =
+                '<div class="result-card result-error" style="max-width:820px;margin:40px auto 0;">' +
+                  '<div class="result-title">✕ Erro de Rede</div>' +
+                  '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>' +
+                '</div>';
+            });
+
+        } else {
+          // ── BLOCKCHAIN-ONLY FALLBACK ──
+          console.log('[DISTINTO] Blockchain-only verification. Serial:', serial);
+          fetch('/api/verify/' + encodeURIComponent(serial))
+            .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); })
+            .then(function (result) {
+              setLoading(btn, false);
+              var d = result.data;
+              console.log('[DISTINTO] Blockchain response:', JSON.stringify(d));
+
+              if (!result.ok || d.found === false || d.error) {
+                container.innerHTML =
+                  '<div class="alert-counterfeit">' +
+                    '<span class="alert-icon">⚠</span>' +
+                    '<h3>ALERTA CRÍTICO: PRODUTO NÃO ENCONTRADO NO REGISTRO</h3>' +
+                    '<p>Este número de série não existe na blockchain. Alto risco de falsificação.</p>' +
+                  '</div>';
+              } else {
+                var product = d.product || d;
+                var name    = product.product_name || product.name || '—';
+                var type    = product.product_type || product.type || '—';
+                var color   = product.color || '—';
+                var details = product.technical_details || product.details || '—';
+                var qr      = product.qr_code_data || product.qr_code || '—';
+                var owner   = product.owner || product.current_owner || d.owner || '—';
+                var ts      = product.registered_at || product.timestamp || d.registered_at || d.timestamp || null;
+
+                container.innerHTML =
+                  '<div class="passport">' +
+                    '<div class="passport-header">' +
+                      '<div class="verified-badge badge-authentic">✓</div>' +
+                      '<h3 class="h3-authentic">Autenticado</h3>' +
+                    '</div>' +
+                    '<div class="passport-section">' +
+                      '<div class="passport-section-title">🔗 Proveniência Documental — Camada Blockchain</div>' +
+                      '<div class="passport-grid">' +
+                        '<div class="passport-field"><div class="field-label">Nome do Produto</div><div class="field-value">' + escapeHtml(name) + '</div></div>' +
+                        '<div class="passport-field"><div class="field-label">Tipo do Produto</div><div class="field-value">' + escapeHtml(type) + '</div></div>' +
+                        '<div class="passport-field"><div class="field-label">Cor</div><div class="field-value">' + escapeHtml(color) + '</div></div>' +
+                        '<div class="passport-field"><div class="field-label">Detalhes Técnicos</div><div class="field-value">' + escapeHtml(details) + '</div></div>' +
+                        '<div class="passport-field"><div class="field-label">Dados do QR Code</div><div class="field-value" style="font-family:\'SF Mono\',Consolas,monospace;font-size:0.88rem;">' + escapeHtml(qr) + '</div></div>' +
+                      '</div>' +
+                      '<div style="margin-top:20px;">' +
+                        '<div class="owner-section-title">🛡 Proprietário Legal Atual</div>' +
+                        '<div class="owner-address">' + escapeHtml(owner) + '<span class="owner-badge">✓ Verificado</span></div>' +
+                        (ts ? '<div class="timestamp-row">⏱ Registrado em: ' + formatTimestamp(ts) + '</div>' : '') +
+                      '</div>' +
+                    '</div>' +
+                  '</div>';
+              }
+              container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            })
+            .catch(function (err) {
+              setLoading(btn, false);
+              console.error('[DISTINTO] Blockchain fetch error:', err);
+              container.innerHTML =
+                '<div class="result-card result-error" style="max-width:820px;margin:40px auto 0;">' +
+                  '<div class="result-title">✕ Erro na Verificação</div>' +
+                  '<p style="color:var(--text-secondary);font-size:0.9rem;">' + err.message + '</p>' +
+                '</div>';
+            });
+        }
       }
 
       $('#verifyBtn').addEventListener('click', doVerify);
