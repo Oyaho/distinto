@@ -25,7 +25,7 @@ from solcx import compile_standard, install_solc
 # Hugging Face Vision Transformer Configuration
 # ---------------------------------------------------------------------------
 
-HF_API_URL = "https://api-inference.huggingface.co/models/felipeoya/meu-agente-de-bolsas-luxo"
+HF_API_URL = "https://router.huggingface.co/models/felipeoya/meu-agente-de-bolsas-luxo"
 HF_TOKEN   = os.getenv("HF_TOKEN", "")
 HF_HEADERS = {
     "Authorization": f"Bearer {HF_TOKEN}",
